@@ -1,0 +1,56 @@
+{
+  "manifest_version": 2,
+  "name": "TypeSmart",
+  "version": "1.0.0",
+  "description": "Boost your typing productivity with smart auto-correct, shortcuts, and typing analytics.",
+  "author": "TypeSmart Team — University Security Module",
+
+  "icons": {
+    "48": "assets/icon.png",
+    "96": "assets/icon.png"
+  },
+
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "<all_urls>"
+  ],
+
+  "browser_action": {
+    "default_icon": "assets/icon.png",
+    "default_popup": "popup.html",
+    "default_title": "TypeSmart — Typing Productivity"
+  },
+
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+
+  "background": {
+    "scripts": [
+      "shared/constants.js",
+      "shared/schema.js",
+      "background.js"
+    ],
+    "persistent": true
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "shared/constants.js",
+        "shared/schema.js",
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+
+  "web_accessible_resources": [
+    "assets/*"
+  ]
+}
