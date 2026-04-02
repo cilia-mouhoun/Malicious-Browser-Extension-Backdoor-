@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Stealth Demo</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            background: #f5f5f5;
+        }
+        .box {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        pre {
+            background: #333;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .result {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Stealth.js Demo</h1>
+    
+    <div class="box">
+        <h3>1. Obfuscate / Deobfuscate</h3>
+        <input type="text" id="plainText" placeholder="Type something..." value="password123">
+        <button onclick="testObfuscate()">Hide It</button>
+        <div id="obfuscateResult" class="result"></div>
+    </div>
+    
+    <div class="box">
+        <h3>2. Batch Entries</h3>
+        <button onclick="testBatch()">Create Test Data & Batch</button>
+        <div id="batchResult" class="result"></div>
+    </div>
+    
+    <div class="box">
+        <h3>3. Export to CSV / JSON</h3>
+        <button onclick="testExport()">Export Test Data</button>
+        <div id="exportResult" class="result"></div>
+    </div>
+    
+    <div class="box">
+        <h3>4. Rotate Old Entries</h3>
+        <button onclick="testRotate()">Remove Old Data</button>
+        <div id="rotateResult" class="result"></div>
+    </div>
+
+    <script src="shared/constants.js"></script>
+    <script src="shared/schema.js"></script>
+    <script src="data/stealth.js"></script>
+    
+    <script>
+        function testObfuscate() {
+            let original = document.getElementById('plainText').value;
+            let hidden = Stealth.obfuscate(original);
+            let revealed = Stealth.deobfuscate(hidden);
+            
+            document.getElementById('obfuscateResult').innerHTML = `
+                <strong>Original:</strong> ${original}<br>
+                <strong>Hidden:</strong> ${hidden}<br>
+                <strong>Revealed:</strong> ${revealed}<br>
+                ${original === revealed ? '✅ Works!' : '❌ Error!'}
+            `;
+        }
+        
+        function testBatch() {
+            // Create 2 entries with same session
+            let entry1 = Schema.createEntry("https://facebook.com", "hello", { obfuscated: false });
+            let entry2 = Schema.createEntry("https://facebook.com", " world", { 
+                obfuscated: false, 
+                sessionId: entry1.sessionId 
+            });
+            
+            let data = [Schema.serializeEntry(entry1), Schema.serializeEntry(entry2)];
+            let batched = Stealth.batchEntries(data);
+            
+            document.getElementById('batchResult').innerHTML = `
+                <strong>Original entries:</strong> ${data.length}<br>
+                <strong>After batching:</strong> ${batched.length}<br>
+                ${batched.length === 1 ? '✅ Merged successfully!' : '❌ Failed!'}
+            `;
+        }
+        
+        function testExport() {
+            // Create test data
+            let entry = Schema.createEntry("https://test.com", "hello world", { obfuscated: false });
+            let data = [Schema.serializeEntry(entry)];
+            
+            let json = Stealth.exportAsJSON(data);
+            let csv = Stealth.exportAsCSV(data);
+            
+            document.getElementById('exportResult').innerHTML = `
+                <strong>JSON:</strong>
+                <pre>${json.substring(0, 200)}${json.length > 200 ? '...' : ''}</pre>
+                <strong>CSV:</strong>
+                <pre>${csv.substring(0, 200)}${csv.length > 200 ? '...' : ''}</pre>
+                ✅ Export working!
+            `;
+        }
+        
+        function testRotate() {
+            // Create old entry (1 hour ago)
+            let oldEntry = Schema.createEntry("https://old.com", "old data", { obfuscated: false });
+            let oldTimestamp = Date.now() - 3600000;
+            let oldEntryWithTime = {
+                url: oldEntry.url,
+                timestamp: oldTimestamp,
+                keys: oldEntry.keys,
+                sessionId: oldEntry.sessionId,
+                obfuscated: oldEntry.obfuscated
+            };
+            
+            // Create new entry
+            let newEntry = Schema.createEntry("https://new.com", "new data", { obfuscated: false });
+            
+            let data = [Schema.serializeEntry(oldEntryWithTime), Schema.serializeEntry(newEntry)];
+            let rotated = Stealth.rotateOldEntries(data, 1800000); // Keep last 30 min
+            
+            document.getElementById('rotateResult').innerHTML = `
+                <strong>Original entries:</strong> ${data.length}<br>
+                <strong>After rotate (keep last 30 min):</strong> ${rotated.length}<br>
+                ${rotated.length === 1 ? '✅ Old entry removed!' : '❌ Failed!'}
+            `;
+        }
+    </script>
+</body>
+</html>

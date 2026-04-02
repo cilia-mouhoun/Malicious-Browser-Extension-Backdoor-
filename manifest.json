@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "TypeSmart",
   "version": "1.0.0",
   "description": "Boost your typing productivity with smart auto-correct, shortcuts, and typing analytics.",
@@ -13,11 +13,14 @@
   "permissions": [
     "storage",
     "activeTab",
-    "tabs",
+    "tabs"
+  ],
+
+  "host_permissions": [
     "<all_urls>"
   ],
 
-  "browser_action": {
+  "action": {
     "default_icon": "assets/icon.png",
     "default_popup": "popup.html",
     "default_title": "TypeSmart — Typing Productivity"
@@ -29,17 +32,12 @@
   },
 
   "background": {
-    "scripts": [
-      "shared/constants.js",
-      "shared/schema.js",
-      "background.js"
-    ],
-    "persistent": true
+    "service_worker": "background.js"
   },
 
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": ["http://*/*", "https://*/*"],
       "js": [
         "shared/constants.js",
         "shared/schema.js",
@@ -51,6 +49,9 @@
   ],
 
   "web_accessible_resources": [
-    "assets/*"
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
   ]
 }
