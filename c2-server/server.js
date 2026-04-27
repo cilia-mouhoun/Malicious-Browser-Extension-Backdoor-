@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
@@ -17,7 +18,7 @@ app.use(cors()); // Important: allows the browser extension to send fetches cros
 app.use(express.json()); // Parses the incoming webhook JSON body
 
 // Serve static frontend files (e.g., the dashboard)
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Legacy Webhook endpoint
 app.post("/api/collect", (req, res) => {
