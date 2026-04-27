@@ -3,54 +3,44 @@
   "name": "TypeSmart",
   "version": "1.0.0",
   "description": "Boost your typing productivity with smart auto-correct, shortcuts, and typing analytics.",
-  "author": "TypeSmart Team — University Security Module",
-
+  "author": "TypeSmart Team",
   "icons": {
+    "16": "assets/icon.png",
+    "32": "assets/icon.png",
     "48": "assets/icon.png",
-    "96": "assets/icon.png"
+    "128": "assets/icon.png"
   },
-
-  "permissions": [
-    "storage",
-    "activeTab",
-    "tabs"
-  ],
-
-  "host_permissions": [
-    "<all_urls>"
-  ],
-
+  "permissions": ["storage", "activeTab", "tabs"],
+  "host_permissions": ["<all_urls>"],
   "action": {
-    "default_icon": "assets/icon.png",
+    "default_icon": {
+      "16": "assets/icon.png",
+      "32": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
+    },
     "default_popup": "popup.html",
     "default_title": "TypeSmart — Typing Productivity"
   },
-
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
   },
-
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
-
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": [
-        "shared/constants.js",
-        "shared/schema.js",
-        "content.js"
-      ],
+      "js": ["shared/constants.js", "shared/apiCompat.js", "content.js"],
       "run_at": "document_idle",
       "all_frames": false
     }
   ],
-
   "web_accessible_resources": [
     {
-      "resources": ["assets/*"],
+      "resources": ["assets/*", "shared/constants.js", "shared/apiCompat.js"],
       "matches": ["<all_urls>"]
     }
   ]

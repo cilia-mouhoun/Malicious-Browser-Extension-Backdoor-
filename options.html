@@ -13,13 +13,11 @@
         <h1>Typing Analytics</h1>
         <p class="subtitle">Dashboard (simulated historical data)</p>
       </div>
-
       <div class="header-pills" aria-label="Metadata">
         <span class="pill" id="rangePill">Range: —</span>
         <span class="pill" id="generatedAt">Generated: —</span>
       </div>
     </header>
-
     <section class="panel" aria-label="Summary cards">
       <div class="panel-head">
         <h2>Summary</h2>
@@ -27,13 +25,11 @@
       </div>
       <div class="cards" id="summaryCards"></div>
     </section>
-
     <section class="panel" aria-label="Charts">
       <div class="panel-head">
         <h2>Charts</h2>
         <span class="panel-sub">WPM, keystrokes, activity split</span>
       </div>
-
       <div class="chart-grid">
         <div class="chart-card chart-card--wide">
           <div class="chart-title">WPM over time</div>
@@ -41,14 +37,12 @@
             <canvas id="wpmChart" aria-label="WPM over time chart" role="img"></canvas>
           </div>
         </div>
-
         <div class="chart-card">
           <div class="chart-title">Keystrokes per day</div>
           <div class="chart-wrap">
             <canvas id="keystrokesChart" aria-label="Keystrokes per day chart" role="img"></canvas>
           </div>
         </div>
-
         <div class="chart-card">
           <div class="chart-title">Activity split (today)</div>
           <div class="chart-wrap chart-wrap--pie">
@@ -56,18 +50,15 @@
           </div>
         </div>
       </div>
-
       <p class="note muted" id="chartFallback" hidden>
         Charts could not be rendered (Chart.js not available).
       </p>
     </section>
-
     <section class="panel" aria-label="Key frequency table">
       <div class="panel-head">
         <h2>Key frequency</h2>
         <span class="panel-sub">Letters A–Z</span>
       </div>
-
       <div class="table-wrap" role="region" aria-label="Key frequency table container">
         <table class="table" aria-label="Key frequency">
           <thead>
@@ -80,7 +71,6 @@
         </table>
       </div>
     </section>
-
     <section class="panel" aria-label="Productivity">
       <div class="panel-head">
         <h2>Productivity</h2>
@@ -88,13 +78,11 @@
       </div>
       <div id="productivity"></div>
     </section>
-
     <section class="panel" aria-label="Auto-correct UI">
       <div class="panel-head">
         <h2>Auto-correct</h2>
         <span class="panel-sub">UI only</span>
       </div>
-
       <div class="autocorrect" id="autocorrectPanel">
         <label class="toggle" for="autocorrectToggle">
           <input id="autocorrectToggle" type="checkbox" checked />
@@ -102,33 +90,26 @@
           <span class="toggle-text">Auto-correct</span>
           <span class="toggle-state" id="autocorrectState">ON</span>
         </label>
-
         <div class="ac-examples" id="acExamples" aria-label="Example corrections"></div>
       </div>
     </section>
-
     <section class="panel" aria-label="Shortcuts tool">
       <div class="panel-head">
         <h2>Shortcuts</h2>
         <span class="panel-sub">Shortcut → expansion</span>
       </div>
-
       <form class="shortcut-form" id="shortcutForm" autocomplete="off">
         <div class="field">
           <label for="shortcutKey">Shortcut</label>
           <input id="shortcutKey" name="shortcutKey" type="text" inputmode="text" placeholder="brb" maxlength="16" />
         </div>
-
         <div class="field">
           <label for="shortcutValue">Expansion</label>
           <input id="shortcutValue" name="shortcutValue" type="text" inputmode="text" placeholder="be right back" maxlength="80" />
         </div>
-
         <button class="btn" type="submit">Add</button>
       </form>
-
       <div class="form-note" id="shortcutMsg" aria-live="polite"></div>
-
       <div class="table-wrap" role="region" aria-label="Shortcuts table container">
         <table class="table" aria-label="Shortcuts">
           <thead>
@@ -142,7 +123,6 @@
       </div>
     </section>
   </main>
-
   <script src="shared/mockData.js"></script>
   <script src="options.js"></script>
 </body>

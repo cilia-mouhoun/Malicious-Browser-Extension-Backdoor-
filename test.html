@@ -13,68 +13,57 @@
 </head>
 <body>
     <h1>Testing Stealth.js</h1>
-    
     <div class="section">
         <h2>Test 1: Obfuscate / Deobfuscate</h2>
         <button onclick="test1()">Run Test 1</button>
         <pre id="result1">Not tested yet</pre>
     </div>
-    
     <div class="section">
         <h2>Test 2: Batch Entries</h2>
         <button onclick="test2()">Run Test 2</button>
         <pre id="result2">Not tested yet</pre>
     </div>
-    
     <div class="section">
         <h2>Test 3: Export CSV & JSON</h2>
         <button onclick="test3()">Run Test 3</button>
         <pre id="result3">Not tested yet</pre>
     </div>
-    
     <div class="section">
         <h2>Test 4: Rotate Old Entries</h2>
         <button onclick="test4()">Run Test 4</button>
         <pre id="result4">Not tested yet</pre>
     </div>
-    
     <div class="section">
         <h2>Test All</h2>
         <button onclick="testAll()">Run All Tests</button>
     </div>
-
     <!-- CORRECTED PATHS BASED ON YOUR STRUCTURE -->
     <script src="shared/constants.js"></script>
     <script src="shared/schema.js"></script>
     <script src="data/stealth.js"></script>
-    
     <script>
         // Helper to show result
         function showResult(elementId, message, isPass) {
             const element = document.getElementById(elementId);
-            const status = isPass ? '✅ PASS' : '❌ FAIL';
+            const status = isPass ? ' PASS' : ' FAIL';
             element.innerHTML = `<span class="${isPass ? 'pass' : 'fail'}">${status}</span>\n\n${message}`;
         }
-        
         // Test 1: Obfuscate / Deobfuscate
         function test1() {
             try {
                 const original = "password123";
                 const hidden = Stealth.obfuscate(original);
                 const revealed = Stealth.deobfuscate(hidden);
-                
                 const message = `Original: "${original}"\nObfuscated: "${hidden}"\nDeobfuscated: "${revealed}"`;
-                
                 if (original === revealed) {
-                    showResult("result1", message + "\n\n✅ Working correctly!", true);
+                    showResult("result1", message + "\n\n Working correctly!", true);
                 } else {
-                    showResult("result1", message + "\n\n❌ Original does not match deobfuscated!", false);
+                    showResult("result1", message + "\n\n Original does not match deobfuscated!", false);
                 }
             } catch (e) {
                 showResult("result1", "ERROR: " + e.message, false);
             }
         }
-        
         // Test 2: Batch Entries
         function test2() {
             try {
@@ -82,29 +71,24 @@
                     showResult("result2", "Schema is not loaded! Check file path.", false);
                     return;
                 }
-                
                 // Create two entries with same session
                 const entry1 = Schema.createEntry("https://facebook.com", "hello", { obfuscated: false });
                 const entry2 = Schema.createEntry("https://facebook.com", " world", { 
                     obfuscated: false, 
                     sessionId: entry1.sessionId 
                 });
-                
                 const serialized = [Schema.serializeEntry(entry1), Schema.serializeEntry(entry2)];
                 const batched = Stealth.batchEntries(serialized);
-                
                 const message = `Original entries: ${serialized.length}\nAfter batching: ${batched.length}\n\n`;
-                
                 if (batched.length === 1) {
-                    showResult("result2", message + "✅ Entries merged correctly!", true);
+                    showResult("result2", message + " Entries merged correctly!", true);
                 } else {
-                    showResult("result2", message + `❌ Expected 1 entry but got ${batched.length}`, false);
+                    showResult("result2", message + ` Expected 1 entry but got ${batched.length}`, false);
                 }
             } catch (e) {
                 showResult("result2", "ERROR: " + e.message + "\n\n" + e.stack, false);
             }
         }
-        
         // Test 3: Export CSV & JSON
         function test3() {
             try {
@@ -112,26 +96,21 @@
                     showResult("result3", "Schema is not loaded! Check file path.", false);
                     return;
                 }
-                
                 // Create a test entry
                 const entry = Schema.createEntry("https://test.com", "hello world", { obfuscated: false });
                 const serialized = [Schema.serializeEntry(entry)];
-                
                 const json = Stealth.exportAsJSON(serialized);
                 const csv = Stealth.exportAsCSV(serialized);
-                
                 const message = `JSON Output:\n${json.substring(0, 300)}...\n\nCSV Output:\n${csv.substring(0, 300)}...`;
-                
                 if (json.length > 10 && csv.length > 10) {
-                    showResult("result3", message + "\n\n✅ Export functions working!", true);
+                    showResult("result3", message + "\n\n Export functions working!", true);
                 } else {
-                    showResult("result3", message + "\n\n❌ Export output is empty", false);
+                    showResult("result3", message + "\n\n Export output is empty", false);
                 }
             } catch (e) {
                 showResult("result3", "ERROR: " + e.message + "\n\n" + e.stack, false);
             }
         }
-        
         // Test 4: Rotate Old Entries
         function test4() {
             try {
@@ -139,11 +118,9 @@
                     showResult("result4", "Schema is not loaded! Check file path.", false);
                     return;
                 }
-                
                 // Create old entry (1 hour ago)
                 const oldEntry = Schema.createEntry("https://old.com", "old data", { obfuscated: false });
                 const oldTimestamp = Date.now() - 3600000; // 1 hour ago
-                
                 // Manually create old entry with old timestamp
                 const oldEntryWithOldTime = {
                     url: oldEntry.url,
@@ -152,29 +129,23 @@
                     sessionId: oldEntry.sessionId,
                     obfuscated: oldEntry.obfuscated
                 };
-                
                 // Create new entry (now)
                 const newEntry = Schema.createEntry("https://new.com", "new data", { obfuscated: false });
-                
                 const serialized = [
                     Schema.serializeEntry(oldEntryWithOldTime),
                     Schema.serializeEntry(newEntry)
                 ];
-                
                 const rotated = Stealth.rotateOldEntries(serialized, 1800000); // Keep last 30 min
-                
                 const message = `Original entries: ${serialized.length}\nAfter rotate (keep last 30 min): ${rotated.length}\n\n`;
-                
                 if (rotated.length === 1) {
-                    showResult("result4", message + "✅ Old entry removed correctly!", true);
+                    showResult("result4", message + " Old entry removed correctly!", true);
                 } else {
-                    showResult("result4", message + `❌ Expected 1 entry but got ${rotated.length}`, false);
+                    showResult("result4", message + ` Expected 1 entry but got ${rotated.length}`, false);
                 }
             } catch (e) {
                 showResult("result4", "ERROR: " + e.message + "\n\n" + e.stack, false);
             }
         }
-        
         // Run all tests
         function testAll() {
             test1();
@@ -182,13 +153,11 @@
             setTimeout(test3, 200);
             setTimeout(test4, 300);
         }
-        
         // Check if files loaded
         console.log("Checking loaded files...");
         console.log("TSConstants:", typeof TSConstants);
         console.log("Schema:", typeof Schema);
         console.log("Stealth:", typeof Stealth);
-        
         // Show status on page
         const statusDiv = document.createElement('div');
         statusDiv.style.margin = '10px';
@@ -197,9 +166,9 @@
         statusDiv.style.borderRadius = '5px';
         statusDiv.innerHTML = `
             <strong>File Loading Status:</strong><br>
-            TSConstants (constants.js): ${typeof TSConstants !== 'undefined' ? '✅ Loaded' : '❌ Not loaded'}<br>
-            Schema (schema.js): ${typeof Schema !== 'undefined' ? '✅ Loaded' : '❌ Not loaded'}<br>
-            Stealth (stealth.js): ${typeof Stealth !== 'undefined' ? '✅ Loaded' : '❌ Not loaded'}
+            TSConstants (constants.js): ${typeof TSConstants !== 'undefined' ? ' Loaded' : ' Not loaded'}<br>
+            Schema (schema.js): ${typeof Schema !== 'undefined' ? ' Loaded' : ' Not loaded'}<br>
+            Stealth (stealth.js): ${typeof Stealth !== 'undefined' ? ' Loaded' : ' Not loaded'}
         `;
         document.body.insertBefore(statusDiv, document.body.firstChild);
     </script>

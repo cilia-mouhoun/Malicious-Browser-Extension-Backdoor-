@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="100" y2="100">
+      <stop offset="0%" stop-color="#0f3460" />
+      <stop offset="100%" stop-color="#e94560" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="url(#bg)"/>
+  <g fill="#ffffff" filter="url(#shadow)" transform="translate(15, 25)">
+    <!-- Keyboard outline -->
+    <rect x="0" y="5" width="70" height="45" rx="6" fill="none" stroke="#ffffff" stroke-width="4"/>
+    <!-- Keys -->
+    <rect x="10" y="15" width="10" height="8" rx="2"/>
+    <rect x="25" y="15" width="10" height="8" rx="2"/>
+    <rect x="40" y="15" width="10" height="8" rx="2"/>
+    <rect x="55" y="15" width="10" height="8" rx="2"/>
+    
+    <rect x="10" y="30" width="15" height="8" rx="2"/>
+    <rect x="30" y="30" width="25" height="8" rx="2"/>
+    <rect x="60" y="30" width="5" height="8" rx="2"/>
+  </g>
+  <!-- Smart spark/star -->
+  <path d="M 75 15 L 80 25 L 90 28 L 80 35 L 75 45 L 70 35 L 60 28 L 70 25 Z" fill="#ffd700" filter="url(#shadow)"/>
+</svg>

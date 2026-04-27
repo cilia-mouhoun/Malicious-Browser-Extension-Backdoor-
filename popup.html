@@ -1,66 +1,68 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Typing Analytics — Popup</title>
-  <link rel="stylesheet" href="popup.css" />
-</head>
-<body>
-  <main class="popup" aria-label="Typing analytics popup (simulated)">
-    <header class="top">
-      <div class="brand">
-        <h1 class="app-title">Typing Analytics</h1>
-        <p class="app-subtitle">
-          <span class="muted">Site:</span>
-          <span class="mono" id="site">example.com</span>
-        </p>
-      </div>
-
-      <div class="status" id="status" aria-live="polite" aria-label="Activity status">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span class="status-text" id="statusText">Active</span>
-      </div>
-    </header>
-
-    <section class="stats" aria-label="Live metrics">
-      <div class="stat">
-        <div class="stat-label">WPM</div>
-        <div class="stat-value accent" id="wpm">0</div>
-        <div class="stat-sub">Updates every second</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-label">Error rate</div>
-        <div class="stat-value" id="errorRate">0.0%</div>
-        <div class="stat-sub">Smoothed estimate</div>
-      </div>
-
-      <div class="stat stat--wide">
-        <div class="stat-label">Keystrokes</div>
-        <div class="stat-value" id="keystrokes">0</div>
-        <div class="stat-sub">This session</div>
-      </div>
-    </section>
-
-    <section class="controls" aria-label="Controls">
-      <label class="toggle" for="simToggle">
-        <input id="simToggle" type="checkbox" checked />
-        <span class="toggle-track" aria-hidden="true"></span>
-        <span class="toggle-text">Simulation</span>
-        <span class="toggle-state" id="simState">ON</span>
-      </label>
-
-      <button class="btn" type="button" id="resetBtn">Reset stats</button>
-    </section>
-
-    <footer class="foot" aria-label="Info">
-      <span class="muted">Simulated data only</span>
-      <span class="muted">Idle after 5s</span>
-    </footer>
-  </main>
-
-  <script src="shared/mockData.js"></script>
-  <script src="popup.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typing Analytics — Popup</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup" aria-label="Typing analytics popup (real data)">
+      <header class="top">
+        <div class="brand">
+          <h1 class="app-title">Typing Analytics</h1>
+          <p class="app-subtitle">
+            <span class="muted">Site:</span>
+            <span class="mono" id="site">—</span>
+          </p>
+        </div>
+        <div
+          class="status"
+          id="status"
+          aria-live="polite"
+          aria-label="Activity status"
+        >
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text" id="statusText">Idle</span>
+        </div>
+      </header>
+      <section class="stats" aria-label="Live metrics">
+        <div class="stat">
+          <div class="stat-label">WPM</div>
+          <div class="stat-value accent" id="wpm">0</div>
+          <div class="stat-sub">Words per minute</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Error rate</div>
+          <div class="stat-value" id="errorRate">0.0%</div>
+          <div class="stat-sub">Backspace ratio</div>
+        </div>
+        <div class="stat stat--wide">
+          <div class="stat-label">Recent keystrokes</div>
+          <div class="stat-value" id="keystrokes">0</div>
+          <div class="stat-sub">Last 5 minutes</div>
+        </div>
+      </section>
+      <section class="summary" aria-label="Summary statistics">
+        <div class="summary-item" id="totalKeystrokes">Total: 0</div>
+        <div class="summary-item" id="sessionCount">Sessions: 0</div>
+        <div class="summary-item" id="domainCount">Sites: 0</div>
+      </section>
+      <section class="controls" aria-label="Controls">
+        <button class="btn btn--export" type="button" id="exportBtn">
+          Export data
+        </button>
+        <button class="btn btn--danger" type="button" id="clearBtn">
+          Clear all
+        </button>
+      </section>
+      <footer class="foot" aria-label="Info">
+        <span class="muted">Real data collection active</span>
+      </footer>
+    </main>
+    <script src="shared/constants.js"></script>
+    <script src="shared/schema.js"></script>
+    <script src="data/stealth.js"></script>
+    <script src="popup.js"></script>
+  </body>
 </html>
